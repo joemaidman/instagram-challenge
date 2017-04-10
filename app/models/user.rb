@@ -7,10 +7,11 @@ class User < ActiveRecord::Base
   has_many :commented_pictures, through: :comments, source: :picture
   has_many :liked_pictures, through: :likes, source: :picture
 
+   acts_as_voter
+
   def has_liked?(picture)
     liked_pictures.include? picture
   end
-
 
   def has_commented_on?(picture)
     commented_pictures.include? picture

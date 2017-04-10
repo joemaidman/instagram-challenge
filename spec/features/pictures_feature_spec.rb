@@ -31,5 +31,35 @@ feature 'pictures' do
     end
   end
 
+  context 'commenting on a picture' do
+    scenario 'signed-in users can add a comment to a picture and see it on the home page' do
+      visit '/'
+      sign_up
+      click_link 'Post a picture'
+      attach_file('picture[image]', File.absolute_path('./spec/test_images/cat_no_gps.jpg'))
+      click_button 'Create Picture'
+      click_link 'Comment'
+      fill_in 'comment_content', with: 'Great!'
+      click_button 'Create Comment'
+      expect(current_path).to eq '/pictures'
+      expect(page).to have_content('test@example.com: Great!')
+      expect(page).to have_css("img[@alt='Cat no gps']")
+    end
+
+    scenario 'random visitors cannot add a comment to a picture' do
+      visit '/'
+      sign_up
+      click_link 'Post a picture'
+      attach_file('picture[image]', File.absolute_path('./spec/test_images/cat_no_gps.jpg'))
+      click_button 'Create Picture'
+      click_link 'Sign out'
+      expect(current_path).to eq '/'
+      expect(page).to have_content 'Sign in'
+      expect(page).to have_content 'Sign up'
+      expect(page).to have_css("img[@alt='Cat no gps']")
+      expect(page).not_to have_link 'Post a picture'
+    end
+  end
+
 
 end

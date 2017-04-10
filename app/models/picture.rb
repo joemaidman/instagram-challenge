@@ -15,4 +15,5 @@ class Picture < ActiveRecord::Base
   has_many :comments,
     -> { extending WithUserAssociationExtension },
     dependent: :destroy
+    acts_as_votable
 end

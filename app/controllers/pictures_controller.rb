@@ -1,6 +1,7 @@
 class PicturesController < ApplicationController
   before_action :set_picture, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, :except => [:index]
+  respond_to :js, :json, :html
   include PicturesHelper
   # GET /pictures
   # GET /pictures.json
@@ -61,6 +62,26 @@ class PicturesController < ApplicationController
     end
   end
 
+  def like
+    @picture = Picture.find(params[:id])
+    @picture.likes.build_with_user(comment_params, current_user)
+    puts "Hello"
+    if request.xhr?
+      head :ok
+    else
+      redirect_to @picture
+    end
+  end
+
+  def upvote
+    if !current_user.has_liked? @picture
+      @picture.liked_by current_user
+    elsif current_user.has_liked? @picture
+      # as the above method can also result nil if he is yet to vote
+      @picture.unliked_by current_user
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_picture
@@ -71,4 +92,14 @@ class PicturesController < ApplicationController
     def picture_params
       params.require(:picture).permit(:description, :image, :postDateTime, :latitude, :longitude, :city)
     end
+
+    def upvote
+      @picture.liked_by current_user
+      redirect_back(fallback_location: root_path)
+    end
+
+   def downvote
+     @picture.disliked_by current_user
+     redirect_back(fallback_location: root_path)
+   end
 end

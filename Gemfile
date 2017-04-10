@@ -14,6 +14,10 @@ gem 'devise'
 
 gem 'shoulda'
 
+gem 'acts_as_votable', '~> 0.10.0'
+
+gem 'friendly_id', '~> 5.1.0'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.8'
 # Use postgresql as the database for Active Record

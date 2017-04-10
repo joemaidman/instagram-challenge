@@ -1,4 +1,6 @@
-<p><%= link_to 'Post a picture', new_picture_path %></p>
+<% if current_user %>
+  <p><%= link_to 'Post a picture', new_picture_path %></p>
+<% end %>
   <% if @pictures.any? %>
     <% @pictures.each do |picture| %>
     <div class="post">
@@ -9,12 +11,25 @@
         <%= image_tag picture.image.url(:large) %></br>
         <%= picture.description %>
         <% if current_user %>
-        <%= link_to 'Comment', new_picture_comment_path(picture) %>
-        <% if current_user.owns?(picture) %>
-          <%= link_to 'Edit', edit_picture_path(picture) %>
-          <%= link_to 'Destroy', picture, method: :delete, data: { confirm: 'Are you sure?' } %>
+          <%= link_to 'Comment', new_picture_comment_path(picture) %>
+          <% if current_user.owns?(picture) %>
+            <%= link_to 'Edit', edit_picture_path(picture) %>
+            <%= link_to 'Destroy', picture, method: :delete, data: { confirm: 'Are you sure?' } %>
+          <% end %>
         <% end %>
-        <% end %>
+        <!-- Adding a class liked -->
+<style>
+ .liked {
+    color: blue;
+  }
+</style>
+<%= link_to new_picture_like_path(picture), class:"like-btn", method: :put, remote: true do %>
+    <button class="btn btn-warning">
+      <span><p><i class="fa fa-thumbs-up fa-lg" aria-hidden="true"></i></p></span>
+    </button>
+<% end %>
+<span class="likes-count"> <%= picture.get_upvotes.size %> </span>
+        <!-- <%= link_to 'Like', new_picture_like_path(picture), remote: true %> -->
         <% picture.comments.each do |comment| %>
           <h5><b><%= comment.user.email %>: </b><%= comment.content %></h5>
         <% end %>
